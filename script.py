@@ -26,7 +26,7 @@ for message in consumer:
         transaction_hashes.append(tx['hash'])
     session.execute(
         """
-INSERT INTO bitcoin.relation (block_hash, transaction_hash)
+INSERT INTO bitcoin.relation (block_hash, transaction_hashes)
 VALUES (%s,%s)
 """,
         (str(block_hash), str(json.dumps(transaction_hashes))))
