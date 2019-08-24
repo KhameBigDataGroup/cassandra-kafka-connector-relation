@@ -23,7 +23,7 @@ for message in consumer:
     for tx in entry['tx']:
         session.execute(
             """
-    INSERT INTO bitcoin.blocks (block_hash, transaction_hash)
+    INSERT INTO bitcoin.relation (block_hash, transaction_hash)
     VALUES (%s,%s)
     """,
             (str(block_hash), str(tx['hash'])))
