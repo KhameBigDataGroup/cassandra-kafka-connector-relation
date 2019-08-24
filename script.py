@@ -15,15 +15,18 @@ session.execute("CREATE KEYSPACE IF NOT EXISTS bitcoin WITH REPLICATION = { 'cla
 
 session.execute("USE bitcoin;")
 
-session.execute("CREATE TABLE IF NOT EXISTS bitcoin.relation (block_hash text  PRIMARY KEY, transaction_hash text );")
+session.execute("CREATE TABLE IF NOT EXISTS bitcoin.relation (block_hash text  PRIMARY KEY, transaction_hashes text );")
 
 for message in consumer:
     entry = json.loads(message.value)
     block_hash = entry['hash']
+    transaction_hashes = []
+
     for tx in entry['tx']:
-        session.execute(
-            """
-    INSERT INTO bitcoin.relation (block_hash, transaction_hash)
-    VALUES (%s,%s)
-    """,
-            (str(block_hash), str(tx['hash'])))
+        transaction_hashes.append(tx['hash'])
+    session.execute(
+        """
+INSERT INTO bitcoin.relation (block_hash, transaction_hash)
+VALUES (%s,%s)
+""",
+        (str(block_hash), str(json.dumps(transaction_hashes))))
