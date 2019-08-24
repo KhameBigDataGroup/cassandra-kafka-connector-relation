@@ -19,9 +19,11 @@ session.execute("CREATE TABLE IF NOT EXISTS bitcoin.relation (block_hash text  P
 
 for message in consumer:
     entry = json.loads(message.value)
-    session.execute(
-        """
-INSERT INTO bitcoin.blocks (block_hash, transaction_hash)
-VALUES (%s,%s)
-""",
-        (str(entry['block_hash']), str(entry['transaction_hash'])))
+    block_hash = entry['hash']
+    for tx in entry['tx']:
+        session.execute(
+            """
+    INSERT INTO bitcoin.blocks (block_hash, transaction_hash)
+    VALUES (%s,%s)
+    """,
+            (str(block_hash), str(tx['hash'])))
